@@ -1,5 +1,6 @@
 import { styled } from '@stitches/react'
-import { withRouter } from 'next/router';
+import { useState } from 'react'
+import { useRouter} from 'next/router'
 
 const BackgroundContent = styled('div', {
   backgroundImage: 'url(/images/globo.png)',
@@ -241,6 +242,41 @@ const RightContent = styled('div', {
 
 
 export default function Login() {
+  const [dataForm, setDataForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    country: '',
+    receiveNotifications: null
+  })
+
+  const router = useRouter()
+
+  const onChangeInput = e => setDataForm({...dataForm, [e.target.name]: e.target.value})
+
+  const sendUser = async e => {
+    e.preventDefault()
+    try {
+      const res = await fetch('https://629f52338b939d3dc29519e3.mockapi.io/api/challenge/user', {
+        method: 'POST',
+        body: JSON.stringify(dataForm),
+        headers: { 'Content-Type': 'application/json'}
+      })
+
+      const responseEnv = await res.json()
+
+      console.log(responseEnv.error ? "Erro. Tente novamente mais tarde!" : responseEnv)
+      if (responseEnv.error) {
+        console.log("Erro. Tente novamente mais tarde!")
+      } else {
+        router.push("/home")
+      }
+    } catch(err) {
+      console.log(err ? err : "Erro. Tente novamente mais tarde!")
+    }
+  }
+
   return (
     <BackgroundContent>
       <div className='container m-auto'>
@@ -248,40 +284,40 @@ export default function Login() {
           <LeftContent>
             <h1>Cadastre-se</h1>
             <p>Para começar, insira os dados abaixo:</p>  
-            <form method="POST">
+            <form method="POST" onSubmit={sendUser}>
               <Input>
                 <div className="floating-label-group">
-                  <input type="text" id="name" className="form-control" autocomplete="off" required />
+                  <input type="text" id="name" name="firstName" className="form-control" required onChange={onChangeInput} value={dataForm.firstName}/>
                   <label className="floating-label">Nome</label>
                 </div>
               </Input>
               <Input>
                 <div className="floating-label-group">
-                  <input type="text" id="lastName" className="form-control" autocomplete="off" required />
+                  <input type="text" id="lastName" name="lastName" className="form-control" required  onChange={onChangeInput} value={dataForm.lastName}/>
                   <label className="floating-label">Sobrenome</label>
                 </div>
               </Input>
               <Input>
                 <div className="floating-label-group">
-                  <input type="text" id="email" className="form-control" autocomplete="off" required />
+                  <input type="text" id="email" name="email" className="form-control" required  onChange={onChangeInput} value={dataForm.email}/>
                   <label className="floating-label">E-mail</label>
                 </div>
               </Input>
               <Input>
                 <div className="floating-label-group">
-                  <input type="text" id="born" className="form-control" autocomplete="off" required />
+                  <input type="text" id="dateOfBirthday" name="dateOfBirthday" className="form-control" required  onChange={onChangeInput} value={dataForm.dateOfBirthday}/>
                   <label className="floating-label">Data de nascimento</label>
                 </div>
               </Input>
               <Input>
                 <div className="floating-label-group">
-                  <input type="password" id="password" className="form-control" autocomplete="off" required />
+                  <input type="password" id="password" name="password" className="form-control" required  onChange={onChangeInput} value={dataForm.password}/>
                   <label className="floating-label">Senha</label>
                 </div>
               </Input>
               <Input>
                 <div className="floating-label-group">
-                  <textarea id="bio" className="form-control" autocomplete="off" maxlength="90" required />
+                  <textarea id="bio" name="bio" className="form-control" maxLength="90" required  onChange={onChangeInput} value={dataForm.bio}/>
                   <label className="floating-label">Bio</label>
                 </div>
               </Input>
