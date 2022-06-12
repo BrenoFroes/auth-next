@@ -3,7 +3,17 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
 import { useRouter} from 'next/router'
-import { styled } from '@stitches/react'
+import { createStitches } from '@stitches/react'
+
+export const { styled, css } = createStitches({
+  media: {
+    sm: '(max-width: 576px)',
+    md: '(max-width: 768px)',
+    lg: '(max-width: 992px)',
+    xl: '(max-width: 1200px)',
+    xxl: '(max-width: 1400px)',
+  },
+});
 
 const BackgroundContent = styled('div', {
   backgroundImage: 'url(/images/globo.png)',
@@ -21,8 +31,19 @@ const CustomContent = styled('div', {
   justifyContent: 'space-evenly',
   minHeight: '100vh',
   width: '100%',
-  padding: '32px'
+  padding: '32px',
+  '@xl': {
+    padding: '0',
+  },
+  '@lg': {
+    flexDirection: 'column',
+    padding: '24px'
+  },
+  '@md': {
+    padding: '16px'
+  }
 });
+
 
 const LeftContent = styled('div', {
   display: 'flex',
@@ -40,6 +61,16 @@ const LeftContent = styled('div', {
   maxHeight: 'auto',
   padding: '77px',
   textAlign: 'center',
+  '@xl': {
+    padding: '32px'
+  },
+  '@lg': {
+    order: 2,
+    padding: '48px'
+  },
+  '@md': {
+    padding: '32px'
+  },
 
   'h1': {
     fontStyle: 'normal',
@@ -68,8 +99,8 @@ const LeftContent = styled('div', {
 })
 
 const Input = styled('div', {
-  'input, textarea, select': {
-    background: '#202020',
+  'input, textarea, select, input:visited, input:target, input:focus, input:not(:focus), input:valid': {
+    background: '#202020 !important',
     border: '1px solid #414141',
     borderRadius: '8px',
     height: '56px',
@@ -104,6 +135,9 @@ const Input = styled('div', {
     color: '#FA4D56',
     display: 'none'
   },
+  '.floating-label > p': {
+    display: 'none'
+  },
   'input:focus ~ .floating-label, input:not(:focus):valid ~ .floating-label, textarea:focus ~ .floating-label, textarea:not(:focus):valid ~ .floating-label, select:focus ~ .floating-label, select:not(:focus):valid ~ .floating-label': {
     top: '15px',
     bottom: '0px',
@@ -117,7 +151,11 @@ const Input = styled('div', {
     display: 'flex',
     marginLeft: '8px'
   },
-  'input-red': {
+  'input:focus ~ .floating-label > p, input:not(:focus):valid ~ .floating-label > p': {
+    display: 'flex',
+    marginLeft: '8px'
+  },
+  '.input-red, .input-red:focus, .input-red:active, .input-red:target': {
     border: '1px solid #FA4D56'
   },
   'p.error': {
@@ -227,13 +265,25 @@ const RightContent = styled('div', {
   justifyContent: 'center',
   maxWidth: '353px',
   width: '100%',
+  padding: '16px',
+
+  '@lg': {
+    order: 1,
+    padding: '32px 16px',
+    maxWidth: '100%'
+  },
+
   'h2': {
     fontWeight: '700',
     fontSize: '45px',
     lineHeight: '130%',
     display: 'flex',
     alignItems: 'center',
-    color: '#FFFFFF'
+    color: '#FFFFFF',
+
+    '@lg': {
+      fontSize: '32px',
+    },
   },
   'hr': {
     width: '43px',
@@ -276,11 +326,12 @@ export default function Login() {
 
   // const onChangeInput = e => setDataForm({...dataForm, [e.target.name]: e.target.value})
 
-  const sendUser = async e => {
+  const sendUser = async function (payload) {
+    console.log(JSON.stringify(register), payload);
     try {
       const res = await fetch('https://629f52338b939d3dc29519e3.mockapi.io/api/challenge/user', {
         method: 'POST',
-        body: JSON.stringify(register),
+        body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json'}
       })
 
@@ -304,7 +355,7 @@ export default function Login() {
           <LeftContent>
             <h1>Cadastre-se</h1>
             <p className="subtitle">Para começar, insira os dados abaixo:</p>  
-            <form onSubmit={handleSubmit(sendUser)}>
+            <form onSubmit={handleSubmit(data => { sendUser(data)})}>
               <Input>
                 <div className="floating-label-group">
                   <input
@@ -363,14 +414,17 @@ export default function Login() {
                     className={ errors.dateOfBirthday ? 'form-control input-red' : 'form-control' }
                     type="text"
                     required
-                    {...register("dateOfBirthday", { required: true })}
-                    aria-label="Data de nascimento"/>
+                    {...register('dateOfBirthday', {
+                      required: "Este campo é obrigatório.",
+                      valueAsDate: false
+                    })}
+                    aria-label="dateOfBirthday"/>
                   <ErrorMessage
                     errors={errors}
                     name="dateOfBirthday"
                     render={({ message }) => <p className="error">{message}</p>}
                   />
-                  <label className="floating-label">Data de nascimento <span>*</span></label>
+                  <label className="floating-label">Data de nascimento <p>(dd/mm/aaaa)</p><span>*</span></label>
                 </div>
               </Input>
               <Input>
