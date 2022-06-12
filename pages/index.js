@@ -158,6 +158,22 @@ const Input = styled('div', {
   '.input-red, .input-red:focus, .input-red:active, .input-red:target': {
     border: '1px solid #FA4D56'
   },
+  'input[type=date] ~ .floating-label, input[type=date] ~ .floating-label': {
+    top: '15px',
+    bottom: '0px',
+    left: '16px',
+    fontSize: '12px',
+    fontWeight: '500',
+    opacity: '1',
+    color: '#A0A0A0'
+  },
+  'input[type=date]::-webkit-calendar-picker-indicator ':{
+    borderRadius: '4px',
+    marginRight: '-12px',
+    color: '#fff',
+    backgroundColor: '#fff',
+    fill: '#fff',
+  },
   'p.error': {
     fontWeight: 400,
     fontSize: '12px',
@@ -327,7 +343,6 @@ export default function Login() {
   // const onChangeInput = e => setDataForm({...dataForm, [e.target.name]: e.target.value})
 
   const sendUser = async function (payload) {
-    console.log(JSON.stringify(register), payload);
     try {
       const res = await fetch('https://629f52338b939d3dc29519e3.mockapi.io/api/challenge/user', {
         method: 'POST',
@@ -338,6 +353,7 @@ export default function Login() {
       const responseEnv = await res.json()
 
       console.log(responseEnv.error ? "Erro. Tente novamente mais tarde!" : responseEnv)
+      window.localStorage.setItem('id_trace', `${responseEnv.id}`);
       if (responseEnv.error) {
         console.log("Erro. Tente novamente mais tarde!")
       } else {
@@ -362,8 +378,8 @@ export default function Login() {
                     id="firstName"
                     name="firstName"
                     type="text"
-                    required
                     className={ errors.firstName ? 'form-control input-red' : 'form-control' }
+                    required
                     {...register("firstName", { required: true })}
                     aria-label="Primeiro nome"/>
                   <label className="floating-label">Nome <span>*</span></label>
@@ -412,11 +428,11 @@ export default function Login() {
                     id="dateOfBirthday"
                     name="dateOfBirthday"  
                     className={ errors.dateOfBirthday ? 'form-control input-red' : 'form-control' }
-                    type="text"
+                    type="date"
                     required
                     {...register('dateOfBirthday', {
                       required: "Este campo é obrigatório.",
-                      valueAsDate: false
+                      valueAsDate: true
                     })}
                     aria-label="dateOfBirthday"/>
                   <ErrorMessage
@@ -424,7 +440,7 @@ export default function Login() {
                     name="dateOfBirthday"
                     render={({ message }) => <p className="error">{message}</p>}
                   />
-                  <label className="floating-label">Data de nascimento <p>(dd/mm/aaaa)</p><span>*</span></label>
+                  <label className="floating-label">Data de nascimento<span>*</span></label>
                 </div>
               </Input>
               <Input>
