@@ -1,4 +1,5 @@
-import React from 'react'
+import * as React from 'react'
+import { useState, useEffect } from 'react'
 import { createStitches, styled } from '@stitches/react'
 
 const Initials = styled('span', {
@@ -9,35 +10,50 @@ const Initials = styled('span', {
     width: '78px',
     background: '#47E0FF',
     borderRadius: '50%',
+    margin: '0 auto',
     
     'h1': {
       color: '#000000',
       fontWeight: 500,
       fontSize: '25px',
       lineHeight: '130%',
+      textTransform: 'uppercase'
     }
 })
 
+export default function Content() {
+    const [data, setData] = useState(null)
+    const [date, setDate] = useState(null)
+    const [isLoading, setLoading] = useState(false)
 
-export const getStaticPros = async () => {
-    const id = window.localStorage.getItem('id_trace')
-    const res = await fetch(`https://629f52338b939d3dc29519e3.mockapi.io/api/user/${id}`)
-    const data = await res.json()
+    useEffect(() => {
+        const id = window.localStorage.getItem('id_trace')
+        setLoading(true)
+        fetch(`https://629f52338b939d3dc29519e3.mockapi.io/api/challenge/user/${id}`)
+            .then((res) => res.json())
+            .then((data) => {
+                const month = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"]
+                let date = new Date(data.dateOfBirthday)
+                let name = month[date.getMonth()];
+                let formatDate = `${date.getDate() + 1} de ${name} de ${date.getFullYear()}` 
+                setDate(formatDate)
+                setData(data)
+                setLoading(false)
+            })
+    }, [])
+    
 
-    return {
-        props: { user: data }
-    }
-}
-
-const ContentHome = ({ user }) => {
+    if (isLoading) return <p>Loading...</p>
+    if (!data) return <p>No profile data</p>
+  
     return (
+      <div>
         <div>
-            <Initials><h1>{user}</h1></Initials>
-            <h2>Bem vindo Ellon Musk</h2>
+            <Initials><h1>{data.firstName.charAt(0)}{data.lastName.charAt(0)}</h1></Initials>
+            <h2>Bem vindo {data.firstName} {data.lastName}</h2>
             <hr></hr>
-            <p>Você nasceu no dia 4 de agosto de 1984.</p>
+            <p>Você nasceu no dia {date}.</p>
         </div>
+      </div>
     )
 }
-
-export default ContentHome

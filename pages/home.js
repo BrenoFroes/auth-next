@@ -81,8 +81,6 @@ const CustomContent = styled('div', {
     fontWeight: 300,
     fontSize: '18px',
     lineHeight: '130%',
-    display: 'flex',
-    alignItems: 'center',
     textAlign: 'center',
     color: '#FFFFFF',
     marginTop: '16px'
