@@ -111,7 +111,7 @@ const Initials = styled('span', {
   }
 })
 
-function Home ({responseEnv}) {
+function Home () {
   return (
     <BackgroundContent>
       <div className='container m-auto'>
@@ -121,28 +121,6 @@ function Home ({responseEnv}) {
       </div>
     </BackgroundContent>
   )
-}
-
-export async function getStaticProps() {
-  // const id = window.localStorage.getItem('id_trace')
-  let responseEnv = ''
-  try {
-    const res = await fetch(`https://629f52338b939d3dc29519e3.mockapi.io/api/user/32`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json'}
-    })
-
-    responseEnv = await res.json()
-
-    console.log(responseEnv.error ? "Erro. Tente novamente mais tarde!" : responseEnv)
-  } catch(err) {
-    rensposeEnv = err ? err : "Erro. Tente novamente mais tarde!"
-  }
-  return {
-    props: {
-      responseEnv
-    }
-  }
 }
 
 export default Home
