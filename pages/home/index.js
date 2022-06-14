@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
 import { useRouter} from 'next/router'
 import { createStitches } from '@stitches/react'
-import Content from './contentHome'
+import Content from './content'
 
 export const { styled, css } = createStitches({
   media: {
@@ -27,7 +27,10 @@ const BackgroundContent = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  '@md': {
+    padding: '32px'
+  },
 })
 
 const CustomContent = styled('div', {
@@ -58,12 +61,16 @@ const CustomContent = styled('div', {
   },
   'h2': {
     fontWeight: 700,
+    textAlign: 'center',
     fontSize: '45px',
     lineHeight: '130%',
     display: 'flex',
     alignItems: 'center',
     color: '#FFFFFF',
-    margin: '40px auto 16px'
+    margin: '40px auto 16px',
+    '@lg': {
+      fontSize: '32px',
+    },
   },
   'hr': {
     width: '43px',
